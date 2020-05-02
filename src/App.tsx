@@ -1,26 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
+import {AppBar, Container, Toolbar, Typography} from '@material-ui/core'
 import './App.css';
+import NavBar from "./components/navbar"
+import ManageProgramsContainer from "./containers/managePrograms/manageProgramsContainer"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App() : React.ReactElement {
+    return (
+        <>
+            <AppBar color="primary" position="static">
+                <Toolbar component='div'>
+                    <Typography variant='h4' component='h4'>Szelest</Typography>
+                    <NavBar />
+                </Toolbar>
+            </AppBar>
+            <Container component="div" className="app-container" maxWidth="xl" fixed>
+                <ManageProgramsContainer />
+            </Container>
+        </>
+    );
 }
 
 export default App;
