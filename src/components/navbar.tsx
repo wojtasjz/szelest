@@ -1,9 +1,7 @@
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {Link, useLocation} from 'react-router-dom'
 import {List, ListItem, ListItemText, Typography} from '@material-ui/core'
 import {makeStyles} from '@material-ui/core/styles'
-import {AppState} from '../store'
-import {changeEditModeStateThunk} from '../store/commonActions'
 
 const useStyles = makeStyles({
     firstElement: {
@@ -13,15 +11,14 @@ const useStyles = makeStyles({
 
 const NavBar = () : React.ReactElement => {
     const classes = useStyles()
-    const dispatch = useDispatch()
-    const editMode: boolean = useSelector(
-        (state: AppState) => state.system.editMode
-    )
+    const location = useLocation()
+    const managingExercises = location.pathname === '/exercises'
+    const managingPrograms = location.pathname === '/programs'
 
     return (
         <>
             <List component="nav" className={classes.firstElement}>
-                <ListItem button component="div" onClick={() => dispatch(changeEditModeStateThunk(false))} selected={!editMode}>
+                <ListItem button component={Link} to="/" selected={!managingPrograms && !managingExercises}>
                     <ListItemText>
                         <Typography color="inherit" variant="subtitle1" component="span">
                             Wybór programu
@@ -30,7 +27,7 @@ const NavBar = () : React.ReactElement => {
                 </ListItem>
             </List>
             <List component="nav">
-                <ListItem button component="div" onClick={() => dispatch(changeEditModeStateThunk(true))} selected={editMode}>
+                <ListItem button component={Link} to="/programs" selected={managingPrograms}>
                     <ListItemText>
                         <Typography color="inherit" variant="subtitle1" component="span">
                             Edycja programów
@@ -39,7 +36,7 @@ const NavBar = () : React.ReactElement => {
                 </ListItem>
             </List>
             <List component="nav">
-                <ListItem component="div" >
+                <ListItem button component={Link} to="/exercises" selected={managingExercises}>
                     <ListItemText>
                         <Typography color="inherit" variant="subtitle1" component="span">
                             Edycja ćwiczeń

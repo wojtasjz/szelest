@@ -8,7 +8,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import UndoIcon from '@material-ui/icons/Undo'
 import {AppState} from '../store'
 import * as editProgramActions from '../store/editPrograms/actions'
-import {finishEditModeThunk} from '../store/commonActions'
+import {Link} from 'react-router-dom'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,7 +51,8 @@ const BottomEditAppBar : React.FunctionComponent = () => {
                 color="secondary"
                 className={classes.button}
                 startIcon={<ClearIcon />}
-                onClick={() => dispatch(finishEditModeThunk())}
+                component={Link} to="/"
+                onClick={() => dispatch(editProgramActions.finishEditMode())}
             >
                 Zakończ edycję bez zapisu
             </Button>

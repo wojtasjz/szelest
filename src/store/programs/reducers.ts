@@ -1,4 +1,4 @@
-import {ProgramsActionTypes, ProgramsState} from './types'
+import {ProgramsActionTypes, ProgramsState, SELECTED_PROGRAM_CHANGED} from './types'
 
 const initialState: ProgramsState = {
     programs: [{
@@ -31,5 +31,15 @@ const initialState: ProgramsState = {
 }
 
 export const programsReducer = (state = initialState, action: ProgramsActionTypes): ProgramsState => {
-    return state
+    switch (action.type) {
+        case SELECTED_PROGRAM_CHANGED: {
+
+            return {
+                ...state,
+                selectedProgram: action.program,
+            }
+        }
+        default:
+            return state
+    }
 }

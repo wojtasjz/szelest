@@ -5,11 +5,15 @@ import {CONTEXT_MENU_ACTION_TYPES} from './contextMenuActionTypes'
 import newId from '../utils/newId'
 
 type Props = {
-    allowCopy: boolean,
+    allowCopy?: boolean,
+    allowAdd?: boolean,
+    allowMove?: boolean,
+    closeOnAddClick?: boolean,
+    addLabel?: string,
     onActionSelected: (type: string) => void,
 }
 
-const MoreIconButtonWithContextMenu : React.FunctionComponent<Props> = (props) => {
+const MoreIconButtonWithContextMenu : React.FunctionComponent<Props> = ({allowCopy, allowMove, addLabel, allowAdd, onActionSelected, closeOnAddClick}) => {
     const [id] = React.useState(newId('moreiconmenu-'))
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
@@ -18,11 +22,15 @@ const MoreIconButtonWithContextMenu : React.FunctionComponent<Props> = (props) =
         setAnchorEl(event.currentTarget)
     }
 
-    const handleClose = (type: string | null) => {
-        setAnchorEl(null);
-        if (type) {
-            props.onActionSelected(type)
+    const handleContextMenuItemClick = (type: string) => {
+        onActionSelected(type)
+        if (type !== CONTEXT_MENU_ACTION_TYPES.ADD || closeOnAddClick) {
+            handleClose()
         }
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null)
     }
 
     return <>
@@ -40,15 +48,21 @@ const MoreIconButtonWithContextMenu : React.FunctionComponent<Props> = (props) =
             anchorEl={anchorEl}
             keepMounted
             open={open}
-            onClose={() => handleClose(null)}
+            onClose={() => handleClose()}
         >
-            {props.allowCopy ? <MenuItem key={`${id}-copy`} onClick={() => handleClose(CONTEXT_MENU_ACTION_TYPES.COPY)}>
+            {allowAdd ? <MenuItem key={`${id}-add`} onClick={() => handleContextMenuItemClick(CONTEXT_MENU_ACTION_TYPES.ADD)}>
+                {addLabel || 'Dodaj'}
+            </MenuItem> : null}
+            {allowMove ? <MenuItem key={`${id}-move`} onClick={() => handleContextMenuItemClick(CONTEXT_MENU_ACTION_TYPES.MOVE)}>
+                Zmień kolejność
+            </MenuItem> : null}
+            {allowCopy ? <MenuItem key={`${id}-copy`} onClick={() => handleContextMenuItemClick(CONTEXT_MENU_ACTION_TYPES.COPY)}>
                 Kopiuj
             </MenuItem> : null}
-            <MenuItem key={`${id}-clone`} onClick={() => handleClose(CONTEXT_MENU_ACTION_TYPES.CLONE)}>
+            <MenuItem key={`${id}-clone`} onClick={() => handleContextMenuItemClick(CONTEXT_MENU_ACTION_TYPES.CLONE)}>
                 Klonuj
             </MenuItem>
-            <MenuItem key={`${id}-delete`} onClick={() => handleClose(CONTEXT_MENU_ACTION_TYPES.DELETE)}>
+            <MenuItem key={`${id}-delete`} onClick={() => handleContextMenuItemClick(CONTEXT_MENU_ACTION_TYPES.DELETE)}>
                 Usuń
             </MenuItem>
         </Menu>

@@ -15,6 +15,7 @@ export interface ProgramChange {
 
 export interface EditProgramsState {
     programs: ExerciseProgram[],
+    selectedProgramId?: number,
     lastChanges: ProgramChange[],
     isValid: boolean,
     editModeStarted: boolean,
@@ -22,13 +23,18 @@ export interface EditProgramsState {
 }
 
 export const EDIT_MODE_INITIALIZED = 'EDIT_MODE_INITIALIZED'
+export const SELECTED_EDITABLE_PROGRAM_CHANGED = 'SELECTED_EDITABLE_PROGRAM_CHANGED'
 export const PROGRAM_ADDED = 'PROGRAM_ADDED'
 export const PROGRAM_DELETED = 'PROGRAM_DELETED'
 export const PROGRAM_UPDATED = 'PROGRAM_UPDATED'
-export const SET_ADDED = 'PROGRAM_ADDED'
-export const SET_DELETED = 'PROGRAM_DELETED'
-export const EXERCISE_ADDED = 'PROGRAM_ADDED'
-export const EXERCISE_DELETED = 'PROGRAM_DELETED'
+export const SET_ADDED = 'SET_ADDED'
+export const SET_UPDATED = 'SET_UPDATED'
+export const SET_DELETED = 'SET_DELETED'
+export const SETS_REORDERED = 'SETS_REORDERED'
+export const PROGRAM_EXERCISE_ADDED = 'PROGRAM_EXERCISE_ADDED'
+export const PROGRAM_EXERCISE_UPDATED = 'PROGRAM_EXERCISE_UPDATED'
+export const PROGRAM_EXERCISE_DELETED = 'PROGRAM_EXERCISE_DELETED'
+export const EXERCISES_REORDERED = 'EXERCISES_REORDERED'
 export const LAST_CHANGE_REVERTED = 'LAST_CHANGE_REVERTED'
 export const EDIT_MODE_FINISHED = 'EDIT_MODE_FINISHED'
 export const EDIT_MODE_CANCELLED = 'EDIT_MODE_CANCELLED'
@@ -72,24 +78,61 @@ interface AddSetAction {
     set?: ExerciseSet
 }
 
+interface UpdateSetAction {
+    type: typeof SET_UPDATED
+    programId: number
+    setId: number
+    fieldName: keyof ExerciseSet
+    fieldValue: string | number
+}
+
 interface DeleteSetAction {
     type: typeof SET_DELETED
     programId: number
     setId: number
 }
 
-interface AddExerciseAction {
-    type: typeof EXERCISE_ADDED
+interface ReorderSetsAction {
+    type: typeof SETS_REORDERED
     programId: number
-    programExercise?: ProgramExercise
+    sets: ExerciseSet[]
+}
+
+interface AddExerciseAction {
+    type: typeof PROGRAM_EXERCISE_ADDED
+    programId: number
+    setId: number
+    exercise?: ProgramExercise
+}
+
+interface UpdateExerciseAction {
+    type: typeof PROGRAM_EXERCISE_UPDATED
+    programId: number
+    setId: number
+    exerciseId: number
+    fieldName: keyof ProgramExercise
+    fieldValue: string | number
 }
 
 interface DeleteExerciseAction {
-    type: typeof EXERCISE_DELETED
+    type: typeof PROGRAM_EXERCISE_DELETED
     programId: number
     setId: number
     exerciseId: number
 }
 
+interface ReorderExercisesAction {
+    type: typeof EXERCISES_REORDERED
+    programId: number
+    setId: number
+    exercises: ProgramExercise[]
+}
+
+interface ChangeSelectedProgramAction {
+    type: typeof SELECTED_EDITABLE_PROGRAM_CHANGED
+    programId: number
+}
+
 export type EditProgramsActionTypes = AddProgramAction | DeleteProgramAction | AddSetAction | DeleteSetAction | AddExerciseAction | DeleteExerciseAction | InitializeEditModeAction
-    | FinishEditModeAction | CancelEditModeAction | RevertLastChangeAction | UpdateProgramAction
+    | FinishEditModeAction | CancelEditModeAction | RevertLastChangeAction | UpdateProgramAction | UpdateSetAction | ChangeSelectedProgramAction | UpdateExerciseAction
+    | ReorderSetsAction | ReorderExercisesAction

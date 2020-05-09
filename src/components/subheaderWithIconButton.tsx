@@ -1,12 +1,15 @@
 import React from 'react'
 import {IconButton, ListSubheader, Tooltip} from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
+import OpenWithIcon from '@material-ui/icons/OpenWith'
 import {makeStyles} from '@material-ui/core/styles'
 
 type Props = {
-    showButton: boolean,
+    showAddButton?: boolean,
+    showMoveButton?: boolean,
     subheaderText: string,
-    onButtonClicked: () => void,
+    onAddButtonClicked?: () => void,
+    onMoveButtonClicked?: () => void,
 }
 
 const useStyles = makeStyles({
@@ -16,16 +19,23 @@ const useStyles = makeStyles({
     }
 })
 
-const SubheaderWithIconButton : React.FunctionComponent<Props> = ({showButton, subheaderText, onButtonClicked}) => {
+const SubheaderWithIconButton : React.FunctionComponent<Props> = ({showAddButton, showMoveButton, subheaderText, onAddButtonClicked, onMoveButtonClicked}) => {
     const classes = useStyles()
 
     return <ListSubheader component="div" className={classes.subheader}>
         {subheaderText}
-        {showButton ? <Tooltip title="Dodaj" placement="left">
-            <IconButton color="primary" edge="end" onClick={onButtonClicked}>
-                <AddIcon />
-            </IconButton>
-        </Tooltip> : null}
+        <div>
+            {showMoveButton ? <Tooltip title="Zmień kolejność" placement="left">
+                <IconButton color="primary" edge="end" onClick={onMoveButtonClicked}>
+                    <OpenWithIcon />
+                </IconButton>
+            </Tooltip> : null}
+            {showAddButton ? <Tooltip title="Dodaj" placement="left">
+                <IconButton color="primary" edge="end" onClick={onAddButtonClicked}>
+                    <AddIcon />
+                </IconButton>
+            </Tooltip> : null}
+        </div>
     </ListSubheader>
 }
 

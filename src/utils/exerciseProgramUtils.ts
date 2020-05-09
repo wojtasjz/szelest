@@ -29,3 +29,7 @@ export const cloneSet = (set: ExerciseSet, override?: OptionalExerciseSet) : Exe
     ...(override ? override : {}),
     exercises: [...set.exercises],
 })
+
+export function getFieldValue<T, K extends keyof T> (obj: T, key: K) {
+    return obj[key]
+}

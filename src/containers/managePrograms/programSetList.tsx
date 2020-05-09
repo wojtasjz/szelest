@@ -1,15 +1,14 @@
-import React from 'react'
-import {useSelector} from 'react-redux'
+import React, {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import {List} from '@material-ui/core'
-import {ExerciseProgram} from '../../types/exerciseProgram'
 import ProgramSetListItem from './programSetListItem'
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
 import SubheaderWithIconButton from '../../components/subheaderWithIconButton'
+import {addSet, reorderSets} from '../../store/editPrograms/actions'
+import {ExerciseProgram, ExerciseSet} from '../../types/exerciseProgram'
+import {createSelector} from 'reselect'
 import {AppState} from '../../store'
-
-type Props = {
-    program: ExerciseProgram,
-}
+import ReorderModal from "../../components/reorderModal";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,35 +20,59 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingLeft: theme.spacing(1),
         },
     }),
-);
+)
 
-const ProgramSetList : React.FunctionComponent<Props> = ({program}) => {
+const getSelectedProgramSelector = createSelector(
+    (state: AppState) => state.editPrograms.selectedProgramId,
+    (state: AppState) => state.editPrograms.programs,
+    (programId: number | undefined, programs: ExerciseProgram[]) => programs.find(p => p.id === programId)
+)
+
+const ProgramSetList : React.FunctionComponent = () => {
+    const dispatch = useDispatch()
     const classes = useStyles()
-    const editMode: boolean = useSelector((state: AppState) => state.system.editMode)
+    const program = useSelector(getSelectedProgramSelector)
+    const [showReorderModal, setShowReorderModal] = useState<boolean>(false)
+    if (!program) {
+        return <div></div>
+    }
 
-    return <List
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        subheader={
-            <SubheaderWithIconButton
-                showButton={editMode}
-                subheaderText={`Zestawy ćwiczeń programu ${program.name}`}
-                onButtonClicked={() => {}}
-            />
+    const finishReordering = (sets: ExerciseSet[]) => {
+        setShowReorderModal(false)
+        if (sets) {
+            dispatch(reorderSets(program.id, sets))
         }
-        dense disablePadding
-        className={classes.root}
-    >
-        {program.sets.map(set => {
-            const key = `program-${program.id}-set-${set.id}`
+    }
 
-            return <ProgramSetListItem
-                key={key}
-                set={set}
-                classes={classes}
-                setKey={key}
-            />})}
-    </List>
+    return <>
+        <List
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+            subheader={
+                <SubheaderWithIconButton
+                    showAddButton
+                    showMoveButton={program.sets.length > 1}
+                    subheaderText={`Zestawy ćwiczeń programu ${program.name}`}
+                    onAddButtonClicked={() => dispatch(addSet(program.id))}
+                    onMoveButtonClicked={(() => setShowReorderModal(true))}
+                />
+            }
+            dense disablePadding
+            className={classes.root}
+        >
+            {program.sets.map(set => {
+                const key = `program-${program.id}-set-${set.id}`
+
+                return <ProgramSetListItem
+                    key={key}
+                    set={set}
+                    classes={classes}
+                    setKey={key}
+                    programId={program.id}
+                />})}
+        </List>
+        {showReorderModal ? <ReorderModal items={program.sets} onFinish={(items) => finishReordering(items as ExerciseSet[])} /> : null}
+    </>
 }
 
 export default ProgramSetList

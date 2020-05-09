@@ -1,11 +1,10 @@
 import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {List} from '@material-ui/core'
+import {List, ListSubheader} from '@material-ui/core'
 import {createSelector} from 'reselect'
 import {ExerciseProgram} from '../../types/exerciseProgram'
-import SubheaderWithIconButton from '../../components/subheaderWithIconButton'
 import {AppState} from '../../store'
-import {addProgram, changeSelectedProgram} from '../../store/editPrograms/actions'
+import {changeSelectedProgram} from '../../store/programs/actions'
 import {Exercise} from '../../store/exercises/types'
 import ProgramListItem from './programListItem'
 
@@ -25,31 +24,30 @@ const replaceExerciseIdWithName = (programs: ExerciseProgram[], exercises: Exerc
 }
 
 const getProgramsSelector = createSelector(
-    (state: AppState) => state.editPrograms.programs,
+    (state: AppState) => state.programs.programs,
     (state: AppState) => state.exercises.exercises,
     (programs: ExerciseProgram[], exercises: Exercise[]) => replaceExerciseIdWithName(programs, exercises)
 )
 
-const ProgramList : React.FunctionComponent= () => {
+const getSelectedProgramIdSelector = createSelector(
+    (state: AppState) => state.programs.selectedProgram,
+    (program: ExerciseProgram | undefined) => program ? program.id : undefined
+)
+
+const ProgramList : React.FunctionComponent = () => {
     const dispatch = useDispatch()
-    const selectedProgramId: number | undefined = useSelector((state: AppState) => state.editPrograms.selectedProgramId)
-    const programs: ExerciseProgram[] = useSelector((state: AppState) => state.editPrograms.programs)
+    const selectedProgramId: number | undefined = useSelector(getSelectedProgramIdSelector)
+    const programs: ExerciseProgram[] = useSelector((state: AppState) => state.programs.programs)
 
     return <List
         component="nav"
-        subheader={
-            <SubheaderWithIconButton
-                showAddButton
-                subheaderText="Wybierz program"
-                onAddButtonClicked={() => dispatch(addProgram())}
-            />
-        }
+        subheader={<ListSubheader component="div">Wybierz program</ListSubheader>}
     >
         {programs.map(program => <ProgramListItem
             key={`program-${program.id}`}
             program={program}
             selected={program.id === selectedProgramId}
-            onListItemClick={() => dispatch(changeSelectedProgram(program.id))}
+            onListItemClick={() => dispatch(changeSelectedProgram(program))}
         />)}
     </List>
 }

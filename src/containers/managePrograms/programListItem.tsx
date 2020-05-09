@@ -1,35 +1,64 @@
 import React from 'react'
+import {useDispatch} from 'react-redux'
 import {ExerciseProgram} from '../../types/exerciseProgram'
-import {calculateProgramTotalTime} from '../../utils/exerciseProgramUtils'
-import {ListItem, ListItemText, ListItemSecondaryAction, IconButton, Tooltip, Fab} from '@material-ui/core'
-import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import {ListItem, ListItemText, ListItemSecondaryAction, TextField} from '@material-ui/core'
+import MoreIconButtonWithContextMenu from '../../components/moreIconButtonWithContextMenu'
+import {deleteProgram, addProgram, updateProgram} from '../../store/editPrograms/actions'
+import {CONTEXT_MENU_ACTION_TYPES} from '../../components/contextMenuActionTypes'
 
 type Props = {
     program: ExerciseProgram,
     selected: boolean,
-    onListItemClick: () => void
+    onListItemClick: () => void,
 }
 
-const getCorrectLabel = (setsCount: number): string => {
-    const label = setsCount === 1 ? 'zestaw' : ([2, 3, 4].includes(setsCount) ? 'zestawy' : 'zestawów')
+const ProgramListItem : React.FunctionComponent<Props> = ({program, onListItemClick, selected}) => {
+    const dispatch = useDispatch()
+    const [state, setState] = React.useState({name: program.name, previousName: program.name})
+    const [initialName] = React.useState(program.name)
+    if (program.name !== state.previousName) {
+        setState({name: program.name, previousName: program.name})
+    }
 
-    return `${setsCount} ${label} ćwiczeń`
-}
+    const onAction = (type: string): void => {
+        switch (type) {
+            case CONTEXT_MENU_ACTION_TYPES.DELETE:
+                dispatch(deleteProgram(program.id))
+                break
+            case CONTEXT_MENU_ACTION_TYPES.CLONE:
+                dispatch(addProgram(program))
+                break
+            default:
+                break
+        }
+    }
 
-const ProgramListItem : React.FunctionComponent<Props> = ({program, onListItemClick, selected}) => (
-    <ListItem component="div" button onClick={onListItemClick} selected={selected}>
-        <ListItemText primary={program.name} secondary={`${getCorrectLabel(program.sets.length)}, łączny czas ${calculateProgramTotalTime(program)} sekund`} />
+    const onEditFinished = (event: React.FocusEvent<HTMLInputElement>) => {
+        if (event.target.value !== state.previousName) {
+            dispatch(updateProgram(program.id, event.target.value))
+            setState({name: state.name, previousName: event.target.value})
+        }
+    }
+
+    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setState({name: event.target.value, previousName: state.previousName})
+    }
+
+    return <ListItem component="div" onClick={onListItemClick} selected={selected} style={{cursor: 'pointer'}}>
+        <ListItemText primary={
+            <TextField
+                required label="Nazwa" value={state.name}
+                helperText={initialName && initialName !== state.name && `Poprzednia nazwa: ${initialName}`}
+                onClick={event => event.stopPropagation()}
+                onChange={onChange}
+                onBlur={onEditFinished}
+            />
+        } />
         <ListItemSecondaryAction>
-            <Tooltip title="Rozpocznij program" placement="right">
-                <IconButton edge="end" aria-label="comments">
-                    <Fab color="primary" size="small" component="div" variant="extended">
-                        <PlayArrowIcon />
-                    </Fab>
-                </IconButton>
-            </Tooltip>
+            <MoreIconButtonWithContextMenu onActionSelected={(type: string) => onAction(type)} />
         </ListItemSecondaryAction>
     </ListItem>
 
-)
+}
 
 export default ProgramListItem

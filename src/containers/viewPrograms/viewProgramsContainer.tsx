@@ -3,26 +3,18 @@ import {connect} from 'react-redux'
 import {Container, Grid} from '@material-ui/core'
 import ProgramList from './programList'
 import ProgramSetList from './programSetList'
-import BottomEditAppBar from '../../components/bottomEditAppBar'
-import './manageProgramsContainer.css'
 import {AppState} from '../../store'
-import {changeToEditModeStateThunk} from '../../store/commonActions'
+import {ExerciseProgram} from '../../types/exerciseProgram'
 
 type Props = {
-    selectedProgramId?: number
-    changeToEditModeStateThunk: () => any
+    selectedProgram?: ExerciseProgram
 }
 
-class ManageProgramsContainer extends React.Component<Props> {
-    constructor(props: Props) {
-        props.changeToEditModeStateThunk()
-        super(props)
-    }
-
+class ViewProgramsContainer extends React.Component<Props> {
     render() {
         let rightPanel = <div>Wybierz program, żeby zobaczyć jego ćwiczenia</div>
-        if (this.props.selectedProgramId) {
-            rightPanel = <ProgramSetList />
+        if (this.props.selectedProgram) {
+            rightPanel = <ProgramSetList program={this.props.selectedProgram} />
         }
 
         return (
@@ -35,14 +27,13 @@ class ManageProgramsContainer extends React.Component<Props> {
                         {rightPanel}
                     </Container>
                 </Grid>
-                <BottomEditAppBar />
             </>
         )
     }
 }
 
 const mapStateToProps = (state: AppState) => ({
-    selectedProgramId: state.editPrograms.selectedProgramId,
+    selectedProgram: state.programs.selectedProgram,
 })
 
-export default connect(mapStateToProps, {changeToEditModeStateThunk})(ManageProgramsContainer)
+export default connect(mapStateToProps)(ViewProgramsContainer)

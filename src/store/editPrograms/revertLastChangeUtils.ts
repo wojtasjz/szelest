@@ -1,5 +1,6 @@
 import {EditProgramsState, ProgramChange} from './types'
 import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {updateProgram, updateProgramSet, updateProgramSetExercise} from './editProgramUtils'
 
 const handleRevertAddProgram = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     return {
@@ -11,48 +12,29 @@ const handleRevertAddProgram = (state: EditProgramsState, changeDetails: Program
 
 const handleRevertAddSet = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId} = changeDetails
+    const updateProgramAction = (program: ExerciseProgram) => ({
+        ...program,
+        sets: program.sets.filter(set => set.id !== setId),
+    })
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-
-            return {
-                ...program,
-                sets: program.sets.filter(set => set.id !== setId),
-            }
-        })
+        programs: updateProgram(programId as number, state.programs, updateProgramAction)
     }
 }
 
 const handleRevertAddExercise = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId, exerciseId} = changeDetails
+    const updateSetAction = (set: ExerciseSet) => ({
+        ...set,
+        exercises: set.exercises.filter(exercise => exercise.id !== exerciseId),
+    })
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-
-            return {
-                ...program,
-                sets: program.sets.map(set => {
-                    if (set.id !== setId) {
-                        return set
-                    }
-
-                    return {
-                        ...set,
-                        exercises: set.exercises.filter(exercise => exercise.id !== exerciseId),
-                    }
-                })
-            }
-        })
+        programs: updateProgramSet(programId as number, setId as number, state.programs, updateSetAction)
     }
 }
 
@@ -70,136 +52,81 @@ const handleRevertDeleteProgram = (state: EditProgramsState, changeDetails: Prog
 
 const handleRevertDeleteSet = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {index, item, programId} = changeDetails
+    const updateProgramAction = (program: ExerciseProgram) => {
+        const newSets = program.sets.slice()
+        newSets.splice(index as number, 0, item as ExerciseSet)
+
+        return {
+            ...program,
+            sets: newSets,
+        }
+    }
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-            const newSets = program.sets.slice()
-            newSets.splice(index as number, 0, item as ExerciseSet)
-
-            return {
-                ...program,
-                sets: newSets,
-            }
-        })
+        programs: updateProgram(programId as number, state.programs, updateProgramAction)
     }
 }
 
 const handleRevertDeleteExercise = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {index, item, programId, setId} = changeDetails
+    const updateSetAction = (set: ExerciseSet) => {
+        const newExercises = set.exercises.slice()
+        newExercises.splice(index as number, 0, item as ProgramExercise)
+
+        return {
+            ...set,
+            exercises: newExercises,
+        }
+    }
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-
-            return {
-                ...program,
-                sets: program.sets.map(set => {
-                    if (set.id !== setId) {
-                        return set
-                    }
-                    const newExercises = set.exercises.slice()
-                    newExercises.splice(index as number, 0, item as ProgramExercise)
-
-                    return {
-                        ...set,
-                        exercises: newExercises,
-                    }
-                })
-            }
-        })
+        programs: updateProgramSet(programId as number, setId as number, state.programs, updateSetAction)
     }
 }
 
 const handleRevertUpdateProgram = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, fieldName, fieldValue} = changeDetails
+    const updateProgramAction = (program: ExerciseProgram) => ({
+        ...program,
+        [fieldName as string]: fieldValue,
+    })
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-
-            return {
-                ...program,
-                [fieldName as string]: fieldValue,
-            }
-        })
+        programs: updateProgram(programId as number, state.programs, updateProgramAction)
     }
 }
 
 const handleRevertUpdateSet = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId, fieldName, fieldValue} = changeDetails
+    const updateSetAction = (set: ExerciseSet) => ({
+        ...set,
+        [fieldName as string]: fieldValue,
+    })
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-
-            return {
-                ...program,
-                sets: program.sets.map(set => {
-                    if (set.id !== setId) {
-                        return set
-                    }
-
-                    return {
-                        ...set,
-                        [fieldName as string]: fieldValue,
-                    }
-                })
-            }
-        })
+        programs: updateProgramSet(programId as number, setId as number, state.programs, updateSetAction)
     }
 }
 
 const handleRevertUpdateExercise = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId, exerciseId, fieldName, fieldValue} = changeDetails
+    const updateExerciseAction = (exercise: ProgramExercise) => ({
+        ...exercise,
+        [fieldName as string]: fieldValue,
+    })
 
     return {
         ...state,
         lastChanges: state.lastChanges.slice(0, -1),
-        programs: state.programs.map(program => {
-            if (program.id !== programId) {
-                return program
-            }
-
-            return {
-                ...program,
-                sets: program.sets.map(set => {
-                    if (set.id !== setId) {
-                        return set
-                    }
-
-                    return {
-                        ...set,
-                        exercises: set.exercises.map(exercise => {
-                            if (exercise.id !== exerciseId) {
-                                return exercise
-                            }
-
-                            return {
-                                ...exercise,
-                                [fieldName as string]: fieldValue,
-                            }
-                        }),
-                    }
-                })
-            }
-        })
+        programs: updateProgramSetExercise(programId as number, setId as number, exerciseId as number, state.programs, updateExerciseAction)
     }
 }
 
@@ -217,7 +144,7 @@ export const handleRevertLastChange = (state: EditProgramsState) : EditProgramsS
             return handleRevertAddProgram(state, lastChange)
         }
         case "DELETE": {
-            if (!lastChange.index || !lastChange.item) {
+            if (lastChange.index == null || !lastChange.item) {
                 return state
             }
             if (lastChange.setId) {
