@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {useDispatch} from 'react-redux'
-import {ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {ProgramSet, ProgramSetExercise} from '../../types/exerciseProgram'
 import {ListItem, ListItemText, ListItemSecondaryAction, TextField, Collapse} from '@material-ui/core'
 import MoreIconButtonWithContextMenu from '../../components/moreIconButtonWithContextMenu'
 import {
@@ -16,7 +16,7 @@ import ReorderModal from "../../components/reorderModal";
 import CopyModal from "../../components/copyModal";
 
 type Props = {
-    set: ExerciseSet,
+    set: ProgramSet,
     classes: any,
     setKey: string,
     programId: number
@@ -36,7 +36,7 @@ const ProgramSetListItem : React.FunctionComponent<Props> = ({set, classes, setK
         setOpen(!open)
     }
 
-    const finishReordering = (exercises: ProgramExercise[]) => {
+    const finishReordering = (exercises: ProgramSetExercise[] | undefined) => {
         setShowReorderModal(false)
         if (exercises) {
             dispatch(reorderExercises(programId, set.id, exercises))
@@ -62,6 +62,7 @@ const ProgramSetListItem : React.FunctionComponent<Props> = ({set, classes, setK
                 setShowCopyModal(true)
                 break
             case CONTEXT_MENU_ACTION_TYPES.ADD:
+                setOpen(true)
                 dispatch(addSetExercise(programId, set.id))
                 break
             case CONTEXT_MENU_ACTION_TYPES.MOVE:
@@ -87,7 +88,7 @@ const ProgramSetListItem : React.FunctionComponent<Props> = ({set, classes, setK
         <ListItem component="div" onClick={handleClick} style={{cursor: 'pointer'}}>
             <ListItemText primary={
                 <TextField
-                    required label="Nazwa" value={state.name}
+                    required label="Nazwa" value={state.name} error={!state.name}
                     onClick={event => event.stopPropagation()}
                     onChange={onChange}
                     onBlur={onEditFinished}
@@ -107,7 +108,13 @@ const ProgramSetListItem : React.FunctionComponent<Props> = ({set, classes, setK
         <Collapse in={open} timeout="auto" unmountOnExit>
             <ProgramSetExercisesList set={set} classes={classes} setKey={setKey} programId={programId} />
         </Collapse>
-        {showReorderModal ? <ReorderModal items={set.exercises} onFinish={(items) => finishReordering(items as ProgramExercise[])} /> : null}
+        {showReorderModal ?
+            <ReorderModal<ProgramSetExercise>
+                items={set.exercises.map(item => ({id: item.id, name: item.exercise ? item.exercise.name : '', object: item}))}
+                onFinish={(items) => finishReordering(items)}
+            /> :
+            null
+        }
         {showCopyModal ? <CopyModal
             copyLevel="set"
             excludeId={{programId}}

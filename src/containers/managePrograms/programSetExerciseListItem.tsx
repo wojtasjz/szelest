@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {useDispatch} from 'react-redux'
-import {ProgramExercise} from '../../types/exerciseProgram'
-import {Exercise} from '../../store/exercises/types'
+import {ProgramSetExercise, Exercise} from '../../types/exerciseProgram'
 import {ListItem, ListItemSecondaryAction, ListItemText} from '@material-ui/core'
 import ExerciseAutocompleteTextField from './exerciseAutocompleteTextField'
 import {addSetExercise, deleteSetExercise, updateSetExercise} from '../../store/editPrograms/actions'
@@ -12,13 +11,14 @@ import CopyModal from '../../components/copyModal'
 type Props = {
     programId: number,
     setId: number,
-    exercise: ProgramExercise,
+    exercise: ProgramSetExercise,
     allExercises: Exercise[],
 }
 
 const ProgramSetExerciseListItem : React.FunctionComponent<Props> = ({exercise, allExercises, programId, setId}) => {
     const dispatch = useDispatch()
     const [showCopyModal, setShowCopyModal] = useState<boolean>(false)
+    const currentExercise = exercise.exercise
 
     const onAction = (type: string): void => {
         switch (type) {
@@ -43,15 +43,23 @@ const ProgramSetExerciseListItem : React.FunctionComponent<Props> = ({exercise, 
         }
     }
 
+    const onExerciseUpdate = (value: Exercise) => {
+        if (currentExercise && value.name === currentExercise.name && value.id === currentExercise.id) {
+            return
+        }
+
+        dispatch(updateSetExercise(programId, setId, exercise.id, 'exercise', value))
+    }
+
     return <>
         <ListItem component="div">
             <ListItemText primary={
                 <ExerciseAutocompleteTextField
                     options={allExercises}
-                    exercise={exercise}
-                    onValueChange={(value => value !== exercise.name && dispatch(updateSetExercise(programId, setId, exercise.id, 'name', value)))}
+                    exercise={exercise.exercise}
+                    onValueChange={onExerciseUpdate}
                 />
-            }/>
+            } />
             <ListItemSecondaryAction>
                 <MoreIconButtonWithContextMenu
                     allowCopy

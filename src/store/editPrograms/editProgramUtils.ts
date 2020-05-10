@@ -1,4 +1,4 @@
-import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {ExerciseProgram, ProgramSet, ProgramSetExercise} from '../../types/exerciseProgram'
 
 export const updateProgram = (
     programId: number,
@@ -18,7 +18,7 @@ export const updateProgramSet = (
     programId: number,
     setId: number,
     allPrograms: ExerciseProgram[],
-    action: (set: ExerciseSet, program?: ExerciseProgram) => ExerciseSet,
+    action: (set: ProgramSet, program?: ExerciseProgram) => ProgramSet,
 ): ExerciseProgram[] => {
     const programUpdateAction = (program: ExerciseProgram) => ({
         ...program,
@@ -39,9 +39,9 @@ export const updateProgramSetExercise = (
     setId: number,
     exerciseId: number,
     allPrograms: ExerciseProgram[],
-    action: (program: ProgramExercise) => ProgramExercise,
+    action: (program: ProgramSetExercise) => ProgramSetExercise,
 ): ExerciseProgram[] => {
-    const setUpdateAction = (set: ExerciseSet) => ({
+    const setUpdateAction = (set: ProgramSet) => ({
         ...set,
         exercises: set.exercises.map(exercise => {
             if (exercise.id !== exerciseId) {

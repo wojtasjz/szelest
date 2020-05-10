@@ -7,15 +7,11 @@ const initialState: ProgramsState = {
         sets: [{
             id: 1,
             name: 'interwały',
-            break: 0,
-            repeat: 0,
-            exercises: [{id: 1, name: 'pompki', time: 10}, {id: 2, name: 'przysiady', time: 20}, {id: 3, name: 'brzuszki', time: 30}]
+            exercises: [{id: 1, exercise: {id: 1, name: 'pompki'}}, {id: 2, exercise: {id: 2, name: 'przysiady'}}, {id: 3, exercise: {id: 3, name: 'brzuszki'}}]
         }, {
             id: 2,
             name: 'interwały2',
-            break: 0,
-            repeat: 0,
-            exercises: [{id: 1, name: 'pressy', time: 1}, {id: 2, name: 'cleany', time: 2}, {id: 3, name: 'lunge', time: 3}]
+            exercises: []
         }]
     }, {
         id: 2,
@@ -23,9 +19,7 @@ const initialState: ProgramsState = {
         sets: [{
             id: 1,
             name: 'test',
-            break: 0,
-            repeat: 0,
-            exercises: [{id: 1, name: 'test', time: 100}]
+            exercises: [{id: 1, exercise: {id: 1, name: 'pompki'}}]
         }]
     }],
 }

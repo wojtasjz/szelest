@@ -1,12 +1,12 @@
 import React from 'react'
-import {ExerciseSet} from '../../types/exerciseProgram'
+import {ProgramSet} from '../../types/exerciseProgram'
 import {ListItem, ListItemText, Collapse} from '@material-ui/core'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ProgramSetExercisesList from './programSetExercisesList'
 
 type Props = {
-    set: ExerciseSet,
+    set: ProgramSet,
     classes: any,
     setKey: string
 }

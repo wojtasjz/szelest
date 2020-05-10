@@ -1,5 +1,5 @@
 import {EditProgramsState, ProgramChange} from './types'
-import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {ExerciseProgram, ProgramSet, ProgramSetExercise} from '../../types/exerciseProgram'
 import {updateProgram, updateProgramSet, updateProgramSetExercise} from './editProgramUtils'
 
 const handleRevertAddProgram = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
@@ -26,7 +26,7 @@ const handleRevertAddSet = (state: EditProgramsState, changeDetails: ProgramChan
 
 const handleRevertAddExercise = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId, exerciseId} = changeDetails
-    const updateSetAction = (set: ExerciseSet) => ({
+    const updateSetAction = (set: ProgramSet) => ({
         ...set,
         exercises: set.exercises.filter(exercise => exercise.id !== exerciseId),
     })
@@ -54,7 +54,7 @@ const handleRevertDeleteSet = (state: EditProgramsState, changeDetails: ProgramC
     const {index, item, programId} = changeDetails
     const updateProgramAction = (program: ExerciseProgram) => {
         const newSets = program.sets.slice()
-        newSets.splice(index as number, 0, item as ExerciseSet)
+        newSets.splice(index as number, 0, item as ProgramSet)
 
         return {
             ...program,
@@ -71,9 +71,9 @@ const handleRevertDeleteSet = (state: EditProgramsState, changeDetails: ProgramC
 
 const handleRevertDeleteExercise = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {index, item, programId, setId} = changeDetails
-    const updateSetAction = (set: ExerciseSet) => {
+    const updateSetAction = (set: ProgramSet) => {
         const newExercises = set.exercises.slice()
-        newExercises.splice(index as number, 0, item as ProgramExercise)
+        newExercises.splice(index as number, 0, item as ProgramSetExercise)
 
         return {
             ...set,
@@ -104,7 +104,7 @@ const handleRevertUpdateProgram = (state: EditProgramsState, changeDetails: Prog
 
 const handleRevertUpdateSet = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId, fieldName, fieldValue} = changeDetails
-    const updateSetAction = (set: ExerciseSet) => ({
+    const updateSetAction = (set: ProgramSet) => ({
         ...set,
         [fieldName as string]: fieldValue,
     })
@@ -118,7 +118,7 @@ const handleRevertUpdateSet = (state: EditProgramsState, changeDetails: ProgramC
 
 const handleRevertUpdateExercise = (state: EditProgramsState, changeDetails: ProgramChange) : EditProgramsState => {
     const {programId, setId, exerciseId, fieldName, fieldValue} = changeDetails
-    const updateExerciseAction = (exercise: ProgramExercise) => ({
+    const updateExerciseAction = (exercise: ProgramSetExercise) => ({
         ...exercise,
         [fieldName as string]: fieldValue,
     })
@@ -157,7 +157,7 @@ export const handleRevertLastChange = (state: EditProgramsState) : EditProgramsS
             return handleRevertDeleteProgram(state, lastChange)
         }
         case "UPDATE": {
-            if (!lastChange.fieldName || lastChange.fieldValue == null) {
+            if (!lastChange.fieldName) {
                 return state
             }
             if (lastChange.exerciseId) {

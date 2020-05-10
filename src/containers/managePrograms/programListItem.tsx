@@ -1,10 +1,26 @@
 import React from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
+import {
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction,
+    TextField,
+    Tooltip,
+} from '@material-ui/core'
+import {makeStyles, createStyles} from '@material-ui/core/styles'
+import WarningIcon from '@material-ui/icons/Warning'
 import {ExerciseProgram} from '../../types/exerciseProgram'
-import {ListItem, ListItemText, ListItemSecondaryAction, TextField} from '@material-ui/core'
 import MoreIconButtonWithContextMenu from '../../components/moreIconButtonWithContextMenu'
 import {deleteProgram, addProgram, updateProgram} from '../../store/editPrograms/actions'
 import {CONTEXT_MENU_ACTION_TYPES} from '../../components/contextMenuActionTypes'
+import {AppState} from '../../store'
+
+const useStyles = makeStyles(() => createStyles({
+    iconsBox: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+}))
 
 type Props = {
     program: ExerciseProgram,
@@ -14,7 +30,9 @@ type Props = {
 
 const ProgramListItem : React.FunctionComponent<Props> = ({program, onListItemClick, selected}) => {
     const dispatch = useDispatch()
+    const classes = useStyles()
     const [state, setState] = React.useState({name: program.name, previousName: program.name})
+    const invalidPrograms = useSelector((state: AppState) => state.editPrograms.invalidPrograms)
     const [initialName] = React.useState(program.name)
     if (program.name !== state.previousName) {
         setState({name: program.name, previousName: program.name})
@@ -47,7 +65,7 @@ const ProgramListItem : React.FunctionComponent<Props> = ({program, onListItemCl
     return <ListItem component="div" onClick={onListItemClick} selected={selected} style={{cursor: 'pointer'}}>
         <ListItemText primary={
             <TextField
-                required label="Nazwa" value={state.name}
+                required label="Nazwa" value={state.name} error={!state.name}
                 helperText={initialName && initialName !== state.name && `Poprzednia nazwa: ${initialName}`}
                 onClick={event => event.stopPropagation()}
                 onChange={onChange}
@@ -55,7 +73,12 @@ const ProgramListItem : React.FunctionComponent<Props> = ({program, onListItemCl
             />
         } />
         <ListItemSecondaryAction>
-            <MoreIconButtonWithContextMenu onActionSelected={(type: string) => onAction(type)} />
+            <div className={classes.iconsBox}>
+                {invalidPrograms.includes(program.id) ?
+                    <Tooltip title="Program zawiera błędy" placement="bottom"><WarningIcon color="secondary" /></Tooltip> :
+                    null}
+                <MoreIconButtonWithContextMenu onActionSelected={(type: string) => onAction(type)} />
+            </div>
         </ListItemSecondaryAction>
     </ListItem>
 

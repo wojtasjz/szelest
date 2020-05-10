@@ -1,10 +1,10 @@
 import React from 'react'
-import {ExerciseSet} from '../../types/exerciseProgram'
+import {ProgramSet} from '../../types/exerciseProgram'
 import {List} from '@material-ui/core'
 import ProgramSetExerciseListItem from './programSetExerciseListItem'
 
 type Props = {
-    set: ExerciseSet,
+    set: ProgramSet,
     classes: any,
     setKey: string,
 }

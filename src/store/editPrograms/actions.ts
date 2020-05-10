@@ -15,7 +15,7 @@ import {
     PROGRAM_EXERCISE_UPDATED,
     PROGRAM_EXERCISE_DELETED,
 } from './types'
-import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {ExerciseProgram, ProgramSet, ProgramSetExercise, Exercise} from '../../types/exerciseProgram'
 
 export const addProgram = (program?: ExerciseProgram) => {
     return {
@@ -39,7 +39,7 @@ export const updateProgram = (programId: number, name: string) => {
     }
 }
 
-export const addSet = (programId: number, set?: ExerciseSet) => {
+export const addSet = (programId: number, set?: ProgramSet) => {
     return {
         type: SET_ADDED,
         programId,
@@ -65,7 +65,7 @@ export const updateSet = (programId: number, setId: number, fieldName: string, f
     }
 }
 
-export const reorderSets = (programId: number, sets: ExerciseSet[]) => {
+export const reorderSets = (programId: number, sets: ProgramSet[]) => {
     return {
         type: SETS_REORDERED,
         programId,
@@ -73,7 +73,7 @@ export const reorderSets = (programId: number, sets: ExerciseSet[]) => {
     }
 }
 
-export const reorderExercises = (programId: number, setId: number, exercises: ProgramExercise[]) => {
+export const reorderExercises = (programId: number, setId: number, exercises: ProgramSetExercise[]) => {
     return {
         type: EXERCISES_REORDERED,
         programId,
@@ -82,7 +82,7 @@ export const reorderExercises = (programId: number, setId: number, exercises: Pr
     }
 }
 
-export const addSetExercise = (programId: number, setId: number, exercise?: ProgramExercise) => {
+export const addSetExercise = (programId: number, setId: number, exercise?: ProgramSetExercise) => {
     return {
         type: PROGRAM_EXERCISE_ADDED,
         programId,
@@ -91,7 +91,7 @@ export const addSetExercise = (programId: number, setId: number, exercise?: Prog
     }
 }
 
-export const updateSetExercise = (programId: number, setId: number, exerciseId: number, fieldName: string, fieldValue: string | number) => {
+export const updateSetExercise = (programId: number, setId: number, exerciseId: number, fieldName: string, fieldValue: string | number | Exercise) => {
     return {
         type: PROGRAM_EXERCISE_UPDATED,
         programId,

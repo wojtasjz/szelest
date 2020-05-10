@@ -7,6 +7,12 @@ import ViewProgramsContainer from "./containers/viewPrograms/viewProgramsContain
 import ManageProgramsContainer from "./containers/managePrograms/manageProgramsContainer"
 import ManageExercisesContainer from "./containers/manageExercises/manageExercisesContainer"
 
+// const darkTheme = createMuiTheme({
+//     palette: {
+//         type: 'dark',
+//     },
+// })
+
 function App() : React.ReactElement {
     return (
         <>
@@ -30,7 +36,7 @@ function App() : React.ReactElement {
                 </Switch>
             </Container>
         </>
-    );
+    )
 }
 
 export default App;

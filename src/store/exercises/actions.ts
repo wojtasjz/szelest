@@ -1,8 +1,9 @@
 import {EXERCISE_ADDED, EXERCISE_UPDATED, EXERCISE_DELETED} from './types'
 
-export const addExercise = (name?: string) => {
+export const addExercise = (id: number, name?: string) => {
     return {
         type: EXERCISE_ADDED,
+        id,
         name,
     }
 }

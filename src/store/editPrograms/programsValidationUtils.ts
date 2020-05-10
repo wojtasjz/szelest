@@ -1,11 +1,11 @@
-import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {ExerciseProgram, ProgramSet, ProgramSetExercise} from '../../types/exerciseProgram'
 import {EditProgramsState} from './types'
 
-const isExerciseInvalid = (exercise: ProgramExercise): boolean => {
-    return !exercise.name
+const isExerciseInvalid = (exercise: ProgramSetExercise): boolean => {
+    return !exercise.exercise
 }
 
-const isSetInvalid = (set: ExerciseSet): boolean => {
+const isSetInvalid = (set: ProgramSet): boolean => {
     return !set.name || set.exercises.length === 0 || set.exercises.some(exercise => isExerciseInvalid(exercise))
 }
 

@@ -1,14 +1,14 @@
 import React from 'react'
-import {ProgramExercise} from '../../types/exerciseProgram'
+import {ProgramSetExercise} from '../../types/exerciseProgram'
 import {ListItem, ListItemText} from '@material-ui/core'
 
 type Props = {
-    exercise: ProgramExercise,
+    exercise: ProgramSetExercise,
 }
 
-const ProgramSetExerciseListItem : React.FunctionComponent<Props> = (props) => (
+const ProgramSetExerciseListItem : React.FunctionComponent<Props> = ({exercise}) => (
     <ListItem component="div">
-        <ListItemText primary={props.exercise.name} secondary="jakiś opis" />
+        <ListItemText primary={exercise.exercise ? exercise.exercise.name : ''} secondary="jakiś opis" />
     </ListItem>
 )
 

@@ -5,17 +5,18 @@ import Backend from 'react-dnd-html5-backend'
 import update from 'immutability-helper'
 import ReorderListItem from './reorderListItem'
 
-type OrderListItem = {
+type OrderListItem<T> = {
     id: number
     name: string
+    object: T
 }
 
-type Props = {
-    items: OrderListItem[],
-    onFinish: (items?: OrderListItem[]) => void
+type Props<T> = {
+    items: OrderListItem<T>[],
+    onFinish: (items?: T[]) => void
 }
 
-const ReorderModal : React.FunctionComponent<Props> = ({items, onFinish}) => {
+const ReorderModal = <ObjectType, >({items, onFinish} : Props<ObjectType>) : JSX.Element => {
     const [currentOrder, setOrder] = useState(items)
 
     const moveCard = (dragIndex: number, hoverIndex: number) => {
@@ -56,7 +57,7 @@ const ReorderModal : React.FunctionComponent<Props> = ({items, onFinish}) => {
             <Button onClick={() => onFinish()} color="secondary">
                 Anuluj
             </Button>
-            <Button onClick={() => onFinish(currentOrder)} color="primary" autoFocus>
+            <Button onClick={() => onFinish(currentOrder.map(item => item.object))} color="primary" autoFocus>
                 Zapisz zmiany
             </Button>
         </DialogActions>

@@ -1,23 +1,26 @@
 import React, {useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
+import {createSelector} from 'reselect'
 import {List} from '@material-ui/core'
 import ProgramSetListItem from './programSetListItem'
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
+import {grey} from '@material-ui/core/colors'
 import SubheaderWithIconButton from '../../components/subheaderWithIconButton'
 import {addSet, reorderSets} from '../../store/editPrograms/actions'
-import {ExerciseProgram, ExerciseSet} from '../../types/exerciseProgram'
-import {createSelector} from 'reselect'
+import {ExerciseProgram, ProgramSet} from '../../types/exerciseProgram'
 import {AppState} from '../../store'
-import ReorderModal from "../../components/reorderModal";
+import ReorderModal from '../../components/reorderModal'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             width: '100%',
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: grey[50],
         },
         nested: {
             paddingLeft: theme.spacing(1),
+            paddingRight: theme.spacing(1),
+            backgroundColor: theme.palette.background.paper,
         },
     }),
 )
@@ -37,7 +40,7 @@ const ProgramSetList : React.FunctionComponent = () => {
         return <div></div>
     }
 
-    const finishReordering = (sets: ExerciseSet[]) => {
+    const finishReordering = (sets: ProgramSet[] | undefined) => {
         setShowReorderModal(false)
         if (sets) {
             dispatch(reorderSets(program.id, sets))
@@ -71,7 +74,13 @@ const ProgramSetList : React.FunctionComponent = () => {
                     programId={program.id}
                 />})}
         </List>
-        {showReorderModal ? <ReorderModal items={program.sets} onFinish={(items) => finishReordering(items as ExerciseSet[])} /> : null}
+        {showReorderModal ?
+            <ReorderModal
+                items={program.sets.map(item => ({id: item.id, name: item.name, object: item}))}
+                onFinish={(items) => finishReordering(items)}
+            /> :
+            null
+        }
     </>
 }
 

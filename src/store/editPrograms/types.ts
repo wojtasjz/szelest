@@ -1,4 +1,4 @@
-import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
+import {ExerciseProgram, ProgramSet, ProgramSetExercise} from '../../types/exerciseProgram'
 
 export type ChangeTypes = 'ADD' | 'DELETE' | 'UPDATE'
 
@@ -10,7 +10,7 @@ export interface ProgramChange {
     fieldName?: string
     fieldValue?: any
     index?: number
-    item?: ExerciseProgram | ExerciseSet | ProgramExercise
+    item?: ExerciseProgram | ProgramSet | ProgramSetExercise
 }
 
 export interface EditProgramsState {
@@ -75,14 +75,14 @@ interface DeleteProgramAction {
 interface AddSetAction {
     type: typeof SET_ADDED
     programId: number
-    set?: ExerciseSet
+    set?: ProgramSet
 }
 
 interface UpdateSetAction {
     type: typeof SET_UPDATED
     programId: number
     setId: number
-    fieldName: keyof ExerciseSet
+    fieldName: keyof ProgramSet
     fieldValue: string | number
 }
 
@@ -95,14 +95,14 @@ interface DeleteSetAction {
 interface ReorderSetsAction {
     type: typeof SETS_REORDERED
     programId: number
-    sets: ExerciseSet[]
+    sets: ProgramSet[]
 }
 
 interface AddExerciseAction {
     type: typeof PROGRAM_EXERCISE_ADDED
     programId: number
     setId: number
-    exercise?: ProgramExercise
+    exercise?: ProgramSetExercise
 }
 
 interface UpdateExerciseAction {
@@ -110,7 +110,7 @@ interface UpdateExerciseAction {
     programId: number
     setId: number
     exerciseId: number
-    fieldName: keyof ProgramExercise
+    fieldName: keyof ProgramSetExercise
     fieldValue: string | number
 }
 
@@ -125,7 +125,7 @@ interface ReorderExercisesAction {
     type: typeof EXERCISES_REORDERED
     programId: number
     setId: number
-    exercises: ProgramExercise[]
+    exercises: ProgramSetExercise[]
 }
 
 interface ChangeSelectedProgramAction {

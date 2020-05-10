@@ -1,5 +1,6 @@
 import React from 'react'
 import {List, ListSubheader} from '@material-ui/core'
+import {grey} from '@material-ui/core/colors'
 import ProgramSetListItem from './programSetListItem'
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles'
 import {ExerciseProgram} from '../../types/exerciseProgram'
@@ -12,10 +13,11 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             width: '100%',
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: grey[50],
         },
         nested: {
             paddingLeft: theme.spacing(1),
+            backgroundColor: theme.palette.background.paper,
         },
     }),
 );

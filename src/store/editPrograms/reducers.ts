@@ -19,9 +19,8 @@ import {
     EditProgramsState,
     AddProgramAction,
 } from './types'
-import {ExerciseProgram, ExerciseSet, ProgramExercise} from '../../types/exerciseProgram'
-import {cloneProgram, cloneSet, getFieldValue} from '../../utils/exerciseProgramUtils'
-import {newId} from '../utils'
+import {ExerciseProgram, ProgramSet, ProgramSetExercise} from '../../types/exerciseProgram'
+import {cloneProgram, cloneSet, getFieldValue, newId} from '../../utils/exerciseProgramUtils'
 import {handleRevertLastChange} from './revertLastChangeUtils'
 import {stateWithValidation} from './programsValidationUtils'
 import {updateProgram, updateProgramSet, updateProgramSetExercise} from './editProgramUtils'
@@ -115,7 +114,7 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
                 return state
             }
             const newSetId = newId(program.sets)
-            let setToAdd: ExerciseSet = {
+            let setToAdd: ProgramSet = {
                 ...(set ? cloneSet(set, {name: `Klon ${set.name}`}) : {exercises: [], name: '', repeat: 0, break: 0}),
                 id: newSetId
             }
@@ -133,7 +132,7 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
         case SET_UPDATED: {
             const {setId, programId, fieldName, fieldValue} = action
             let oldFieldValue = null
-            const updateSetAction = (set: ExerciseSet) => {
+            const updateSetAction = (set: ProgramSet) => {
                 oldFieldValue = getFieldValue(set, fieldName)
 
                 return {
@@ -151,7 +150,7 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
         case SET_DELETED: {
             const {setId, programId} = action
             let indexOfRemovedItem: number = -1
-            let removedItem: ExerciseSet | undefined = undefined
+            let removedItem: ProgramSet | undefined = undefined
             const updateProgramAction = (program: ExerciseProgram) => ({
                 ...program,
                 sets: program.sets.filter((set, index) => {
@@ -195,11 +194,11 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
                 return state
             }
             const newExerciseId = newId(set.exercises)
-            let exerciseToAdd: ProgramExercise = {
-                ...(exercise ? exercise : {name: '', time: 0}),
+            let exerciseToAdd: ProgramSetExercise = {
+                ...(exercise || {}),
                 id: newExerciseId
             }
-            const updateSetAction = (set: ExerciseSet) => ({
+            const updateSetAction = (set: ProgramSet) => ({
                 ...set,
                 exercises: [...set.exercises, exerciseToAdd]
             })
@@ -213,7 +212,7 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
         case PROGRAM_EXERCISE_UPDATED: {
             const {setId, programId, exerciseId, fieldName, fieldValue} = action
             let oldFieldValue = null
-            const updateSetExerciseAction = (exercise: ProgramExercise) => {
+            const updateSetExerciseAction = (exercise: ProgramSetExercise) => {
                 oldFieldValue = getFieldValue(exercise, fieldName)
 
                 return {
@@ -225,14 +224,14 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
             return stateWithValidation({
                 ...state,
                 programs: updateProgramSetExercise(programId, setId, exerciseId, state.programs, updateSetExerciseAction),
-                lastChanges: [...state.lastChanges, {changeType: "UPDATE", programId, setId, exerciseId, fieldName: 'name', fieldValue: oldFieldValue}]
+                lastChanges: [...state.lastChanges, {changeType: "UPDATE", programId, setId, exerciseId, fieldName, fieldValue: oldFieldValue}]
             })
         }
         case PROGRAM_EXERCISE_DELETED: {
             const {setId, programId, exerciseId} = action
             let indexOfRemovedItem: number = -1
-            let removedItem: ProgramExercise | undefined = undefined
-            const updateProgramSetAction = (set: ExerciseSet) => ({
+            let removedItem: ProgramSetExercise | undefined = undefined
+            const updateProgramSetAction = (set: ProgramSet) => ({
                 ...set,
                 exercises: set.exercises.filter((exercise, index) => {
                     if (exercise.id === exerciseId) {
@@ -254,7 +253,7 @@ export const editProgramsReducer = (state = initialState, action: EditProgramsAc
         }
         case EXERCISES_REORDERED: {
             const {exercises, programId, setId} = action
-            const updateProgramSetAction = (set: ExerciseSet) => ({
+            const updateProgramSetAction = (set: ProgramSet) => ({
                 ...set,
                 exercises: exercises
             })

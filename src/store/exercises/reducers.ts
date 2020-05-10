@@ -6,7 +6,6 @@ import {
     ExercisesState,
     Exercise,
 } from './types'
-import {newId} from '../utils'
 
 const initialState: ExercisesState = {
     exercises: [
@@ -21,7 +20,7 @@ export const exercisesReducer = (state = initialState, action: ExercisesActionTy
         case EXERCISE_ADDED: {
             const newExercise: Exercise = {
                 name: action.name || '',
-                id: newId(state.exercises),
+                id: action.id,
             }
 
             return {

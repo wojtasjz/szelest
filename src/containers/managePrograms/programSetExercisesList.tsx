@@ -1,19 +1,19 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-import {ExerciseSet} from '../../types/exerciseProgram'
+import {ProgramSet} from '../../types/exerciseProgram'
 import {List} from '@material-ui/core'
 import ProgramSetExerciseListItem from './programSetExerciseListItem'
 import {AppState} from '../../store'
 
 type Props = {
-    set: ExerciseSet,
+    set: ProgramSet,
     programId: number,
     classes: any,
     setKey: string,
 }
 
 const ProgramSetExerciseList : React.FunctionComponent<Props> = ({set, programId, classes, setKey}) => {
-    const allExercises = useSelector((state: AppState) => state.exercises.exercises)
+    const allExercises = useSelector((state: AppState) => state.exercises.exercises.filter(exercise => Boolean(exercise.name)))
 
     return (
         <List

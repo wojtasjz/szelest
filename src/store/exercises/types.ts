@@ -12,6 +12,7 @@ export const EXERCISE_DELETED = 'EXERCISE_DELETED'
 
 interface AddExerciseAction {
     type: typeof EXERCISE_ADDED
+    id: number
     name?: string
 }
 
